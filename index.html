@@ -1,1 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyrics Player Vallenato Retro Mood</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* --- ESTILOS (CSS) --- */
+        
+        /* 1. ESTILO BASE */
+        body {
+            background-color: #052610; /* Verde muy oscuro (default) */
+            color: #f7f2c6;
+            font-family: 'Press Start 2P', cursive; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            overflow: hidden;
+            /* Transición LENTA para el Mood (0.7 segundos) */
+            transition: background-color 0.7s ease-in-out; 
+        }
 
+        #lyrics-container {
+            min-height: 100px;
+            padding: 20px;
+            width: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #text-display {
+            font-size: 1.4rem; 
+            line-height: 2.0;
+            text-shadow: 4px 4px 0px #000;
+        }
+
+        /* 2. NUEVO EFECTO DE MOOD (Coro) */
+        .chorus-mood {
+            /* Un color Azul profundo para el Coro */
+            background-color: #0F1F50 !important; 
+        }
+        
+        /* 3. EFECTO DE PULSO (Background Flash) */
+        .pulse-effect {
+            background-color: #A03030 !important; 
+            /* Importante: Sobrescribimos la transición del body para que el pulso sea RÁPIDO */
+            transition: background-color 0.1s ease-in-out !important; 
+        }
+
+        /* 4. EFECTO DE TEMBLOR (Shake) */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            25% { transform: translate(-1px, -2px) rotate(-1deg); }
+            50% { transform: translate(-3px, 0px) rotate(1deg); }
+            75% { transform: translate(3px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -1px) rotate(-1deg); }
+        }
+
+        .shake-effect {
+            animation: shake 0.2s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        audio {
+            position: fixed;
+            bottom: 20px;
+            width: 80%;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="lyrics-container">
+        <h1 id="text-display">Cargando Silvestre Dangond...</h1>
+    </div>
+
+    <audio id="audio-player" controls>
+        <source src="mi_cancion.m4a" type="audio/mp4">
+        Tu navegador no soporta el formato de audio.
+    </audio>
+
+    <script>
+        /* --- LÓGICA (JAVASCRIPT) --- */
+        
+        // 1. LETRA Y SINCRONIZACIÓN (igual que antes)
+        const lyrics = [
+            // ... (Toda la letra anterior de Un Amor Genial)
+            { time: 0.0, text: "" },
+            { time: 1.0, text: "🎶 Intro Vallenato 🎶" },
+            { time: 14.3, text: "Yo no tengo cómo pagarte" },
+            { time: 16.0, text: "que te quedes conmigo" },
+            { time: 18.0, text: "Ahí, no alcanzaría la vida" },
+            { time: 20.2, text: "para poder contar." },
+            { time: 22.8, text: "Que tú nunca has querido a nadie" },
+            { time: 25.0, text: "como a mí me has querido." },
+            { time: 27.8, text: "Por eso te bendigo" },
+            { time: 30.0, text: "cada día más y más" },
+            { time: 32.8, text: "¡Porque tú!" },
+            { time: 33.6, text: "Porque tú eres muy buena conmigo" },
+            { time: 36.2, text: "Porque tú eres muy linda conmigo" },
+            { time: 39.5, text: "Porque yo te amaría hasta el final." },
+        ];
+
+        // 2. MOMENTOS DE PULSO/SHAKE (igual que antes)
+        const pulseMoments = [
+            { time: 15.0, duration: 0.1 },
+            { time: 17.5, duration: 0.1 },
+            { time: 19.5, duration: 0.1 },
+            { time: 21.0, duration: 0.1 },
+            { time: 29.5, duration: 0.15 },
+            { time: 32.7, duration: 0.2 }, 
+            { time: 33.5, duration: 0.1 },
+            { time: 36.1, duration: 0.1 },
+            { time: 37.0, duration: 0.1 },
+            { time: 40.0, duration: 0.15 } 
+        ];
+
+        // 3. NUEVOS CAMBIOS DE MOOD (Slow Transition)
+        const moodChanges = [
+            // Coro 1 (32.8s - 42.5s)
+            { start: 32.5, end: 42.5, moodClass: 'chorus-mood' },
+            // Coro 2 (1:25.0 - 1:35.0)
+            { start: 85.0, end: 95.0, moodClass: 'chorus-mood' },
+        ];
+
+        const audio = document.getElementById('audio-player');
+        const display = document.getElementById('text-display');
+        const body = document.body;
+
+        audio.addEventListener('timeupdate', () => {
+            const currentTime = audio.currentTime;
+
+            // --- LÓGICA DE LETRAS ---
+            const currentLine = lyrics.slice().reverse().find(line => currentTime >= line.time);
+            if (currentLine && display.innerHTML !== currentLine.text) {
+                display.innerHTML = currentLine.text;
+                display.style.display = "none";
+                setTimeout(() => display.style.display = "block", 10);
+            }
+
+            // --- LÓGICA DE MOOD (NUEVA) ---
+            let moodApplied = false;
+            moodChanges.forEach(mood => {
+                if (currentTime >= mood.start && currentTime < mood.end) {
+                    // Si el tiempo está dentro del rango del Coro
+                    if (!body.classList.contains(mood.moodClass)) {
+                        body.classList.add(mood.moodClass);
+                    }
+                    moodApplied = true;
+                }
+            });
+
+            // Si el tiempo está fuera de CUALQUIER mood definido, regresamos al color base
+            if (!moodApplied && body.classList.contains('chorus-mood')) {
+                 body.classList.remove('chorus-mood');
+            }
+
+
+            // --- LÓGICA DE PULSO Y SHAKE ---
+            pulseMoments.forEach(event => {
+                if (currentTime >= event.time && currentTime < event.time + 0.1) {
+                    // Aplicamos el PULSO (que tiene una transición más rápida)
+                    body.classList.add('pulse-effect');
+                    display.classList.add('shake-effect');
+
+                    setTimeout(() => {
+                        body.classList.remove('pulse-effect');
+                        display.classList.remove('shake-effect');
+                    }, event.duration * 1000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
