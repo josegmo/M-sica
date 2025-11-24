@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Te la dedico amor </title>
+    <title>Lyrics Player Vallenato Retro Final</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         /* --- ESTILOS (CSS) --- */
@@ -30,17 +30,17 @@
             text-shadow: 4px 4px 0px #000;
         }
 
-        /* NUEVA CLASE: ÉNFASIS EN PALABRAS CLAVE */
+        /* ÉNFASIS EN PALABRAS CLAVE (Dorado) */
         .keyword-emphasis {
-            color: #ffd700; /* Color Dorado/Amarillo intenso */
-            text-shadow: 0 0 5px rgba(255, 215, 0, 0.7); /* Pequeño brillo */
+            color: #ffd700; 
+            text-shadow: 0 0 5px rgba(255, 215, 0, 0.7); 
             font-weight: bold;
         }
 
-        /* EFECTO DE MOOD (Coro) */
+        /* EFECTO DE MOOD (Coro - Azul Profundo) */
         .chorus-mood { background-color: #0F1F50 !important; }
         
-        /* EFECTO DE PULSO (Flash Rápido) */
+        /* EFECTO DE PULSO (Flash Rápido - Rojo) */
         .pulse-effect { 
             background-color: #A03030 !important; 
             transition: background-color 0.1s ease-in-out !important; 
@@ -74,31 +74,29 @@
         Tu navegador no soporta el formato de audio.
     </audio>
     <script>
-        // --- JAVASCRIPT CON TIEMPOS AJUSTADOS (+0.8 SEGUNDOS) ---
-
+        // Tiempos de sincronización ajustados a +0.8s
         const lyrics = [
-            { time: 0.0, text: "" }, 
             { time: 1.8, text: "🎶 Intro Vallenato 🎶" },
             { time: 15.1, text: "Yo no tengo cómo pagarte" },
             { time: 16.8, text: "que te quedes <span class='keyword-emphasis'>conmigo</span>" },
-            { time: 20.0, text: "Ay, no me  alcanzaría la vida" },
-            { time: 24.0, text: "para poder contar." },
-            { time: 27.0, text: "Que tú nunca has querido a nadie" },
-            { time: 29.0, text: "como a mí me has <span class='keyword-emphasis'>querido</span>." },
-            { time: 32.0, text: "Por eso te bendigo" },
-            { time: 35.6, text: "cada día más y más" },
-            { time: 39.3, text: "¡Porque tú!" },
-            { time: 41.0, text: "Porque tú eres muy buena conmigo" },
-            { time: 44.2, text: "Porque tú eres muy <span class='keyword-emphasis'>linda</span> conmigo" },
-            { time: 47.6, text: "Porque yo te <span class='keyword-emphasis'>amaré</span> hasta el final." },
+            { time: 18.8, text: "Ahí, no alcanzaría la vida" },
+            { time: 21.0, text: "para poder contar." },
+            { time: 23.6, text: "Que tú nunca has querido a nadie" },
+            { time: 25.8, text: "como a mí me has <span class='keyword-emphasis'>querido</span>." },
+            { time: 28.6, text: "Por eso te bendigo" },
+            { time: 30.8, text: "cada día más y más" },
+            { time: 33.6, text: "¡Porque tú!" },
+            { time: 34.4, text: "Porque tú eres muy buena conmigo" },
+            { time: 37.0, text: "Porque tú eres muy <span class='keyword-emphasis'>linda</span> conmigo" },
+            { time: 40.3, text: "Porque yo te <span class='keyword-emphasis'>amaría</span> hasta el final." },
         ];
 
         const pulseMoments = [
-            { time: 15.1, duration: 0.2 }, { time: 16.8  duration: 0.3 },
-            { time: 20.0, duration: 0.5}, { time: 24.0, duration: 0.8 },
-            { time: 27.0, duration: 0.15 }, { time:29, duration: 0.2 }, 
-            { time: 39.3, duration: 0.2 }, { time: 41.0, duration: 0.2 },
-            { time: 44.2, duration: 0.2 }, { time: 47.6, duration: 0.15 } 
+            { time: 15.8, duration: 0.1 }, { time: 18.3, duration: 0.1 },
+            { time: 20.3, duration: 0.1 }, { time: 21.8, duration: 0.1 },
+            { time: 30.3, duration: 0.15 }, { time: 33.5, duration: 0.2 }, 
+            { time: 34.3, duration: 0.1 }, { time: 36.9, duration: 0.1 },
+            { time: 37.8, duration: 0.1 }, { time: 40.8, duration: 0.15 } 
         ];
 
         const moodChanges = [
@@ -109,11 +107,19 @@
         const audio = document.getElementById('audio-player');
         const display = document.getElementById('text-display');
         const body = document.body;
+        
+        // ** SOLUCIÓN FINAL PARA EL ARRANQUE DEL TEXTO **
+        const FIRST_LYRIC_TIME = 1.8;
 
         audio.addEventListener('timeupdate', () => {
             const currentTime = audio.currentTime;
 
-            // LÓGICA DE LETRAS
+            // 1. REGLA DE BORRADO ESTRICTO: Si el tiempo es menor a 1.8s, borra el display.
+            if (currentTime < FIRST_LYRIC_TIME) {
+                display.innerHTML = "";
+            }
+
+            // 2. LÓGICA DE LETRAS (solo se ejecuta si currentTime >= FIRST_LYRIC_TIME)
             const currentLine = lyrics.slice().reverse().find(line => currentTime >= line.time);
             if (currentLine && display.innerHTML !== currentLine.text) {
                 display.innerHTML = currentLine.text;
@@ -121,7 +127,7 @@
                 setTimeout(() => display.style.display = "block", 10);
             }
 
-            // LÓGICA DE MOOD
+            // LÓGICA DE MOOD (sin cambios)
             let moodApplied = false;
             moodChanges.forEach(mood => {
                 if (currentTime >= mood.start && currentTime < mood.end) {
@@ -132,7 +138,7 @@
             if (!moodApplied && body.classList.contains('chorus-mood')) { body.classList.remove('chorus-mood'); }
 
 
-            // LÓGICA DE PULSO Y SHAKE
+            // LÓGICA DE PULSO Y SHAKE (sin cambios)
             pulseMoments.forEach(event => {
                 if (currentTime >= event.time && currentTime < event.time + 0.1) {
                     body.classList.add('pulse-effect');
